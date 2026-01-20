@@ -5,41 +5,59 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    const float vel = 2;
-    Rigidbody2D rigBody;
-    float t;
+    const float vel = 2f;
+    const float moveDuration = 5f;
 
-    // Start is called before the first frame update
+    Rigidbody2D rigBody;
+    float timer;
+    bool isMoving;
+    Vector2 moveDirection;
+
     void Start()
     {
-       rigBody = GetComponent<Rigidbody2D>();
-       
+        rigBody = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        t += Time.deltaTime;
         if (Input.touchCount > 0)
         {
+            Touch touch = Input.GetTouch(0);
 
-            Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            mouseWorldPos.z = 0f;
-
-
-            Vector2 direction = (mouseWorldPos - transform.position).normalized;
-
-            if (t < 5)
+            if (touch.phase == TouchPhase.Began)
             {
-                rigBody.velocity = (direction * vel);
+                Vector3 worldPos = Camera.main.ScreenToWorldPoint(touch.position);
+                worldPos.z = 0f;
+
+                moveDirection = (worldPos - transform.position).normalized;
+
+                isMoving = true;
+                timer = 0f;
             }
         }
-        else
+
+        else if (isMoving)
         {
-            if (t > 5)
+            if (timer < moveDuration)
             {
-                rigBody.velocity = new Vector2(0f, 0f);
-                t = 0;
+                rigBody.velocity = moveDirection * vel;
+                timer += Time.deltaTime;
+            }
+            else
+            {
+                rigBody.velocity *= 0.99f;
+
+                if (timer < 10f)
+                {
+                    rigBody.velocity = (moveDirection * vel) / 2;
+                    timer += Time.deltaTime;
+                }
+                else
+                {
+                    rigBody.velocity = Vector2.zero;
+                    isMoving = false;
+                }
+
             }
         }
     }
