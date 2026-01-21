@@ -12,14 +12,17 @@ public class PlayerController : MonoBehaviour
     float timer;
     bool isMoving;
     Vector2 moveDirection;
+    AudioSource PlayerRollSFX;
 
     void Start()
     {
         rigBody = GetComponent<Rigidbody2D>();
+        PlayerRollSFX = GameObject.Find("PlayerRollSFX").GetComponent<AudioSource>();
     }
 
     void Update()
     {
+
         if (Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);
@@ -38,6 +41,10 @@ public class PlayerController : MonoBehaviour
 
         else if (isMoving)
         {
+            if (!PlayerRollSFX.isPlaying)
+            {
+                PlayerRollSFX.Play();
+            }
             if (timer < moveDuration)
             {
                 rigBody.velocity = moveDirection * vel;
@@ -59,6 +66,14 @@ public class PlayerController : MonoBehaviour
                 }
 
             }
+        }
+        else if (!isMoving)
+        {
+            if (PlayerRollSFX.isPlaying)
+            {
+                PlayerRollSFX.Stop();
+            }
+
         }
     }
 }
