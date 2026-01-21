@@ -76,4 +76,9 @@ public class PlayerController : MonoBehaviour
             PlayerRollSFX.Play();
         }
     }
+
+    void touchControl() 
+    {
+        print("placeholder");   
+    }
 }
