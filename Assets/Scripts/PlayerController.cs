@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-
+        rollNoise();
         if (Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);
@@ -41,10 +41,6 @@ public class PlayerController : MonoBehaviour
 
         else if (isMoving)
         {
-            if (!PlayerRollSFX.isPlaying)
-            {
-                PlayerRollSFX.Play();
-            }
             if (timer < moveDuration)
             {
                 rigBody.velocity = moveDirection * vel;
@@ -67,13 +63,17 @@ public class PlayerController : MonoBehaviour
 
             }
         }
-        else if (!isMoving)
-        {
-            if (PlayerRollSFX.isPlaying)
-            {
-                PlayerRollSFX.Stop();
-            }
+    }
 
+    void rollNoise()
+    {
+        if (PlayerRollSFX.isPlaying && !isMoving)
+        {
+            PlayerRollSFX.Stop();
+        }
+        else if (!PlayerRollSFX.isPlaying && isMoving)
+        {
+            PlayerRollSFX.Play();
         }
     }
 }
