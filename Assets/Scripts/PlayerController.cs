@@ -12,13 +12,34 @@ public class PlayerController : MonoBehaviour
     float timer;
     bool isMoving;
     Vector2 moveDirection;
+    AudioSource PlayerRollSFX;
 
     void Start()
     {
         rigBody = GetComponent<Rigidbody2D>();
+        PlayerRollSFX = GameObject.Find("PlayerRollSFX").GetComponent<AudioSource>();
     }
 
     void Update()
+    {
+        rollNoise();
+        //touchControl();
+        tiltControl();
+    }
+
+    void rollNoise()
+    {
+        if (PlayerRollSFX.isPlaying && !isMoving)
+        {
+            PlayerRollSFX.Stop();
+        }
+        else if (!PlayerRollSFX.isPlaying && isMoving)
+        {
+            PlayerRollSFX.Play();
+        }
+    }
+
+    void touchControl() 
     {
         if (Input.touchCount > 0)
         {
@@ -45,9 +66,8 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                rigBody.velocity *= 0.99f;
 
-                if (timer < 10f)
+                if (timer < 8f)
                 {
                     rigBody.velocity = (moveDirection * vel) / 2;
                     timer += Time.deltaTime;
@@ -60,5 +80,16 @@ public class PlayerController : MonoBehaviour
 
             }
         }
+    }
+
+    void tiltControl()
+    {
+        Vector2 direction = Vector2.zero;
+
+        direction.x = Input.acceleration.x;
+        direction.y = Input.acceleration.y;
+
+        rigBody.velocity = direction * vel;
+        //transform.Translate(direction * vel);
     }
 }
