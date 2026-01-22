@@ -23,6 +23,24 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         rollNoise();
+        //touchControl();
+        tiltControl();
+    }
+
+    void rollNoise()
+    {
+        if (PlayerRollSFX.isPlaying && !isMoving)
+        {
+            PlayerRollSFX.Stop();
+        }
+        else if (!PlayerRollSFX.isPlaying && isMoving)
+        {
+            PlayerRollSFX.Play();
+        }
+    }
+
+    void touchControl() 
+    {
         if (Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);
@@ -48,9 +66,8 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                rigBody.velocity *= 0.99f;
 
-                if (timer < 10f)
+                if (timer < 8f)
                 {
                     rigBody.velocity = (moveDirection * vel) / 2;
                     timer += Time.deltaTime;
@@ -65,20 +82,14 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void rollNoise()
+    void tiltControl()
     {
-        if (PlayerRollSFX.isPlaying && !isMoving)
-        {
-            PlayerRollSFX.Stop();
-        }
-        else if (!PlayerRollSFX.isPlaying && isMoving)
-        {
-            PlayerRollSFX.Play();
-        }
-    }
+        Vector2 direction = Vector2.zero;
 
-    void touchControl() 
-    {
-        print("placeholder");   
+        direction.x = Input.acceleration.x;
+        direction.y = Input.acceleration.y;
+
+        rigBody.velocity = direction * vel;
+        //transform.Translate(direction * vel);
     }
 }
